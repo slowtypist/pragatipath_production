@@ -1,0 +1,93 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAuthenticated() { return request.auth != null; }
+    function isOwner(uid) { return isAuthenticated() && request.auth.uid == uid; }
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+         (request.auth.token.email == "mili.biswas26112003@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    match /users/{uid} {
+      allow read: if true;
+      allow create, update: if isOwner(uid) || isAdmin();
+      match /data/{documentId} {
+        allow read: if true;
+        allow write: if isOwner(uid) || isAdmin();
+      }
+    }
+
+    match /asha_workers/{uid} {
+      allow read: if isAuthenticated() && (request.auth.uid == uid || isAdmin());
+      allow create: if isAuthenticated() && request.auth.uid == uid;
+      allow update: if isAuthenticated() && (request.auth.uid == uid || isAdmin());
+
+      // Patients can write requests to any ASHA worker
+      match /patient_requests/{docId} {
+        allow read: if isAuthenticated() && (request.auth.uid == uid || isAdmin());
+        allow create: if isAuthenticated();
+        allow update: if isAuthenticated() && (request.auth.uid == uid || isAdmin());
+      }
+      match /voice_notes/{docId} {
+        allow read, write: if isAuthenticated() && (request.auth.uid == uid || isAdmin());
+      }
+      match /medicine_requests/{docId} {
+        allow read, write: if isAuthenticated() && (request.auth.uid == uid || isAdmin());
+      }
+      match /escalations/{docId} {
+        allow read, write: if isAuthenticated() && (request.auth.uid == uid || isAdmin());
+      }
+      match /data/{docId} {
+        allow read, write: if isAuthenticated() && (request.auth.uid == uid || isAdmin());
+      }
+    }
+
+    match /pharmacy_owners/{uid} {
+      allow read, write: if isAuthenticated() && request.auth.uid == uid;
+      allow read: if isAdmin();
+      match /stock/{docId} { allow read, write: if isAuthenticated() && request.auth.uid == uid; }
+      match /orders/{docId} {
+        allow read, write: if isAuthenticated() && request.auth.uid == uid;
+        allow write: if isAuthenticated();
+      }
+      match /ratings/{docId} {
+        allow read: if isAuthenticated() && request.auth.uid == uid;
+        allow write: if isAuthenticated();
+      }
+      match /alerts/{docId} {
+        allow read, write: if isAuthenticated() && request.auth.uid == uid;
+        allow write: if isAuthenticated();
+      }
+    }
+
+    match /delivery_partners/{uid} {
+      allow read, write: if isAuthenticated() && request.auth.uid == uid;
+      allow read: if isAdmin();
+      match /orders/{docId} {
+        allow read, write: if isAuthenticated() && request.auth.uid == uid;
+        allow write: if isAuthenticated();
+      }
+    }
+
+    match /broadcasts/{docId} {
+      allow create: if isAdmin();
+      allow read: if isAuthenticated();
+    }
+
+    match /admin_users/{uid} {
+      // Any authenticated user can read their own admin doc (to check if they're admin)
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    match /facilities/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    match /{path=**} {
+      allow read, write: if isAdmin();
+    }
+  }
+}

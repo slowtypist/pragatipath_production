@@ -1,0 +1,35 @@
+{
+  "name": "PragatiPath — Rural Health Platform",
+  "short_name": "PragatiPath",
+  "description": "Offline-first rural health & development platform for ASHA workers and village communities",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F3E5F5",
+  "theme_color": "#6B46C1",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "categories": ["health", "medical", "social"],
+  "lang": "hi",
+  "shortcuts": [
+    {
+      "name": "ASHA Dashboard",
+      "short_name": "ASHA",
+      "description": "Open ASHA Worker dashboard",
+      "url": "/?role=asha_worker",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

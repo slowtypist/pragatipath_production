@@ -1,0 +1,5 @@
+{
+  "name": "Pragatipath",
+  "description": "A modern, accessible platform for rural development focusing on health, water, energy, education, schemes, and community.",
+  "requestFramePermissions": ["geolocation", "microphone"]
+}

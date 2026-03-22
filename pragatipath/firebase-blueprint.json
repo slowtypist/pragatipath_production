@@ -1,0 +1,87 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "Stores user's basic information and medical profile.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "name": { "type": "string", "description": "User's full name" },
+        "role": { "type": "string", "enum": ["Administrator", "Health Worker", "Delivery Partner", "Pharmacy/Shop Owner", "Patient/User"], "description": "User's role in the system" },
+        "password": { "type": "string", "description": "Secondary password for non-patient roles" },
+        "age": { "type": "number", "description": "User's age" },
+        "gender": { "type": "string", "enum": ["Male", "Female", "Other"], "description": "User's gender" },
+        "dob": { "type": "string", "format": "date", "description": "User's date of birth" },
+        "bloodGroup": { "type": "string", "description": "User's blood group" },
+        "phone": { "type": "string", "description": "User's phone number" },
+        "location": { "type": "string", "description": "User's location" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Profile creation timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Profile update timestamp" }
+      },
+      "required": ["uid", "name", "phone"]
+    },
+    "ChatHistory": {
+      "title": "Chat History",
+      "description": "Stores AI assistant chat history for each user.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "User's UID" },
+        "messages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "role": { "type": "string", "enum": ["user", "model"] },
+              "text": { "type": "string" },
+              "timestamp": { "type": "string", "format": "date-time" }
+            }
+          }
+        },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "VaccinationRecord": {
+      "title": "Vaccination Record",
+      "description": "Stores vaccination status for users and their babies.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "User's UID" },
+        "completedVaccines": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of vaccine IDs that are completed"
+        },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "MaternalCare": {
+      "title": "Maternal Care Data",
+      "description": "Stores pregnancy and baby care details.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "User's UID" },
+        "pregnancyData": { "type": "object", "description": "Pregnancy tracking info" },
+        "babyData": { "type": "object", "description": "Baby health and growth info" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }
+    }
+  },
+  "firestore": {
+    "/users/{uid}": {
+      "schema": "UserProfile",
+      "description": "User profile document"
+    },
+    "/users/{uid}/data/chatHistory": {
+      "schema": "ChatHistory",
+      "description": "User's AI chat history"
+    },
+    "/users/{uid}/data/vaccinations": {
+      "schema": "VaccinationRecord",
+      "description": "User's vaccination records"
+    },
+    "/users/{uid}/data/maternalCare": {
+      "schema": "MaternalCare",
+      "description": "User's maternal care data"
+    }
+  }
+}
